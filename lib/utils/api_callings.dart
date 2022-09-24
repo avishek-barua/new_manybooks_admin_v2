@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/after_login.dart';
+import '../models/author_dummy.dart';
+
 const API_ENDPOINT = 'http://192.168.1.143:8000';
 
 // neo home ip

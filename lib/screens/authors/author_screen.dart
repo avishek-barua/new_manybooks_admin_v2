@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:manybooks_admin_v2/models/states/state.dart';
+import 'package:states_rebuilder/states_rebuilder.dart';
 
 import '../../constants.dart';
 import '../../helper/helper.dart';
@@ -71,60 +73,60 @@ class _AuthorScreenState extends State<AuthorScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            Header(),
-            SizedBox(height: defaultPadding),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Author',
-                              style: Theme.of(context).textTheme.subtitle1),
-                          ElevatedButton.icon(
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: defaultPadding * 1.5,
-                                  vertical: defaultPadding /
-                                      (Responsive.isMobile(context) ? 2 : 1),
-                                ),
-                              ),
-                              onPressed: () => showDialog<String>(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
-                                      title: const Text('Create Atuthor'),
-                                      content: AuthorForm(),
-                                    ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(defaultPadding),
+          child: Column(
+            children: [
+              Header(),
+              SizedBox(height: defaultPadding),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Author',
+                                style: Theme.of(context).textTheme.subtitle1),
+                            ElevatedButton.icon(
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: defaultPadding * 1.5,
+                                    vertical: defaultPadding /
+                                        (Responsive.isMobile(context) ? 2 : 1),
                                   ),
-                              icon: Icon(Icons.add),
-                              label: Text("Add New")),
-                        ],
-                      ),
-                      SizedBox(height: defaultPadding),
-                      AuthorsData(authorList: authorList),
-                      // ListView.builder(
-                      //   itemBuilder: (ctx, i) => ListTile(
-                      //     title: Text(authorList[i].name),
-                      //     subtitle: Text(authorList[i].description),
-                      //   ),
-                      // )
-                    ],
+                                ),
+                                onPressed: () => showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Create Atuthor'),
+                                        content: AuthorForm(),
+                                      ),
+                                    ),
+                                icon: Icon(Icons.add),
+                                label: Text("Add New")),
+                          ],
+                        ),
+                        SizedBox(height: defaultPadding),
+                        AuthorsData(authorList: authorList),
+                        // ListView.builder(
+                        //   itemBuilder: (ctx, i) => ListTile(
+                        //     title: Text(authorList[i].name),
+                        //     subtitle: Text(authorList[i].description),
+                        //   ),
+                        // )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            )
-          ],
+                ],
+              )
+            ],
+          ),
         ),
-      ),
     );
   }
 }
