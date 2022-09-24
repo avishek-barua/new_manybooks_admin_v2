@@ -21,8 +21,7 @@ class _AuthorsDataState extends State<AuthorsData> {
       decoration: BoxDecoration(
           color: secondaryColor,
           borderRadius: const BorderRadius.all(Radius.circular(10))),
-      child: 
-      Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -40,6 +39,7 @@ class _AuthorsDataState extends State<AuthorsData> {
                   DataColumn(label: Text('Birth')),
                   DataColumn(label: Text('Death')),
                   DataColumn(label: Text('Wikipedia')),
+                  DataColumn(label: Text('Actions')),
                 ],
                 rows: List.generate(widget.authorList.length,
                     (index) => authorDataRow(widget.authorList[index]))),
@@ -59,7 +59,19 @@ class _AuthorsDataState extends State<AuthorsData> {
       DataCell(Text(author.description)),
       DataCell(Text(author.birth)),
       DataCell(Text(author.death)),
-      DataCell(Text(author.wikipedia))
+      DataCell(Text(author.wikipedia)),
+      DataCell(Row(
+        children: [
+          ElevatedButton(onPressed: () {}, child: Icon(Icons.edit)),
+          ElevatedButton(
+              onPressed: () {},
+              child: Icon(
+                Icons.delete,
+              ),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.red))),
+        ],
+      ))
     ]);
   }
 }
