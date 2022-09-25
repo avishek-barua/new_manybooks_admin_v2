@@ -5,15 +5,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:manybooks_admin_v2/models/user/user_dummy.dart';
 
 import '../../constants.dart';
+import '../../models/author/author.dart';
+import '../../models/author/author_dummy.dart';
 import '../../responsive.dart';
 import '../dashboard/components/header.dart';
 import '../dashboard/components/my_files.dart';
 import '../dashboard/components/recent_files.dart';
 import '../dashboard/components/storage_details.dart';
+import 'components/users_data.dart';
 
-class UserScreen extends StatelessWidget {
+class UserScreen extends StatefulWidget {
+  @override
+  State<UserScreen> createState() => _UserScreenState();
+}
+
+class _UserScreenState extends State<UserScreen> {
+  List<User> userList = [];
+  @override
+  void initState() {
+    super.initState();
+    getAllUsers();
+  }
+
+  Future<void> getAllUsers() async {
+    var headers = {
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzJhYmQ1MzExZTVkYjJhMjFmNTQzMDMiLCJlbWFpbCI6Im1vbWludWxrYXJpbTk3QGdtYWlsLmNvbSIsImlhdCI6MTY2Mzc0NTM2MywiZXhwIjoxNjYzNzQ4MzYzfQ.AwiR5wK2bSp-fXqu9PZHpFWkXpLOo_7i6UkTVUvPDj8'
+    };
+    var request = http.Request('GET', Uri.parse('http://localhost:8000/users'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String jsonResponse = await response.stream.bytesToString();
+
+      UserResponse userResponse = UserResponse.fromRawJson(jsonResponse);
+      setState(() {
+        userList = userResponse.data!;
+      });
+
+      print('hello');
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,25 +84,12 @@ class UserScreen extends StatelessWidget {
                                         (Responsive.isMobile(context) ? 2 : 1),
                                   ),
                                 ),
-                                onPressed: () => showDialog<String>(
+                                onPressed:  () => showDialog<String>(
                                       context: context,
                                       builder: (BuildContext context) =>
                                           AlertDialog(
-                                        title: const Text('AlertDialog Title'),
-                                        content: const Text(
-                                            'AlertDialog description'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(
-                                                context, 'Cancel'),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, 'OK'),
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
+                                        title: const Text('Create User'),
+                                        content: UserForm(),
                                       ),
                                     ),
                                 icon: Icon(Icons.add),
@@ -69,7 +97,7 @@ class UserScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: defaultPadding),
-                        RecentFiles(),
+                        UsersData(userList: userList)
                       ],
                     )),
               ],
@@ -115,15 +143,8 @@ class UserForm extends StatefulWidget {
 
 class _UserFormState extends State<UserForm> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController genreController = TextEditingController();
-  TextEditingController numberOfPagesController = TextEditingController();
-  TextEditingController languageController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
-  // 'file': '123',
-  // 'cover': '123',
-  // 'numberOfPages': '123',
-  // 'language': 'bn'
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -136,7 +157,7 @@ class _UserFormState extends State<UserForm> {
                 controller: nameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Book Name',
+                  labelText: 'User Name',
                 ),
               ),
             ),
@@ -146,49 +167,10 @@ class _UserFormState extends State<UserForm> {
             Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
-                controller: descriptionController,
+                controller: emailController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Book Description',
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: genreController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Genre',
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: numberOfPagesController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Number of pages',
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: languageController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Language',
+                  labelText: 'User Email',
                 ),
               ),
             ),
@@ -202,32 +184,7 @@ class _UserFormState extends State<UserForm> {
                   child: const Text('Cancel'),
                 ),
                 TextButton(
-                  onPressed: () async {
-                    var headers = {
-                      'Content-Type': 'application/x-www-form-urlencoded'
-                    };
-                    var request = http.Request(
-                        'POST', Uri.parse('http://localhost:8000/books/'));
-                    request.bodyFields = {
-                      'name': nameController.text,
-                      'authorId': '630713e6dd0bf1707e3cd0fb',
-                      'description': descriptionController.text,
-                      'genre': genreController.text,
-                      'file': '123',
-                      'cover': '123',
-                      'numberOfPages': numberOfPagesController.text,
-                      'language': languageController.text
-                    };
-                    request.headers.addAll(headers);
-
-                    http.StreamedResponse response = await request.send();
-
-                    if (response.statusCode == 200) {
-                      print(await response.stream.bytesToString());
-                    } else {
-                      print(response.reasonPhrase);
-                    }
-
+                  onPressed: () {
                     Navigator.pop(context, 'OK');
                   },
                   child: const Text('OK'),

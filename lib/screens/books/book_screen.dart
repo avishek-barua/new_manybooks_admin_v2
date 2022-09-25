@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:manybooks_admin_v2/screens/books/components/books_data.dart';
 
+import '../../models/books/books_dummy.dart';
 import '../dashboard/components/header.dart';
 import '../dashboard/components/my_files.dart';
 import '../dashboard/components/storage_details.dart';
@@ -22,7 +24,7 @@ class BookScreen extends StatefulWidget {
 }
 
 class _BookScreenState extends State<BookScreen> {
-  // List<Author> authorList = [];
+  List<Book> bookList= [];
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,7 @@ class _BookScreenState extends State<BookScreen> {
           'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzA1ZTM2NzQzNzE5ZGU3ZTA2M2E2ZDQiLCJlbWFpbCI6Im1vbWludWxrYXJpbTk3QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU3MTU3MSwiZXhwIjoxNjYzNTc0NTcxfQ.2DS4rFMiAB5pU5jAlljDgIfSz5RXtSKsoc7YNQNWTWc'
     };
     var request =
-        http.Request('Get', Uri.parse('http://localhost:8000/authors/'));
+        http.Request('Get', Uri.parse('http://localhost:8000/books/'));
 
     request.headers.addAll(headers);
 
@@ -44,8 +46,8 @@ class _BookScreenState extends State<BookScreen> {
     if (response.statusCode == 200) {
       String jsonResponse = await response.stream.bytesToString();
 
-      // AuthorGetResponse authorResponse =
-      //     AuthorGetResponse.fromRawJson(jsonResponse);
+      BooksResponse bookResponse =
+          BooksResponse.fromRawJson(jsonResponse);
 
       // var authors = authorResponse.data!.toList();
 
@@ -54,7 +56,7 @@ class _BookScreenState extends State<BookScreen> {
       // print(authorResponse.data);
 
       setState(() {
-        // authorList = authorResponse.data!;
+        bookList = bookResponse.data!;
       });
       print('hello');
 
@@ -108,7 +110,7 @@ class _BookScreenState extends State<BookScreen> {
                           ],
                         ),
                         SizedBox(height: defaultPadding),
-                        RecentFiles(),
+                        BooksData(bookList: bookList)
                       ],
                     )),
               ],

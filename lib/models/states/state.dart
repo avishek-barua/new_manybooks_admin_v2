@@ -1,13 +1,13 @@
 import 'package:states_rebuilder/states_rebuilder.dart';
 import 'package:http/http.dart' as http;
 
-import '../author.dart';
-import '../author_dummy.dart';
+import '../author/author.dart';
+import '../author/author_dummy.dart';
 
 class StatesContainer {
   //Always plain dart class
 
-  List<Author> authorList = [];
+  List<Book> authorList = [];
 
   // Future<void> getAllAuthors() async {
   //   var headers = {

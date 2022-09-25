@@ -28,9 +28,9 @@ class MainScreen extends StatelessWidget {
               flex: 4,
               // child: DashboardScreen(),
               // child: UserScreen(),
-              // child: BookScreen(),
+              child: BookScreen(),
               // child: CommentScreen(),
-              child: AuthorScreen(),
+              // child: AuthorScreen(),
             )
           ],
         ),

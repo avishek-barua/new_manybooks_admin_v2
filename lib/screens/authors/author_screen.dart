@@ -11,13 +11,13 @@ import 'package:states_rebuilder/states_rebuilder.dart';
 
 import '../../constants.dart';
 import '../../helper/helper.dart';
-import '../../models/author.dart';
+import '../../models/author/author.dart';
 import '../../responsive.dart';
 import '../dashboard/components/header.dart';
 import '../dashboard/components/my_files.dart';
 import '../dashboard/components/recent_files.dart';
 import '../dashboard/components/storage_details.dart';
-import '../../models/author_dummy.dart';
+import '../../models/author/author_dummy.dart';
 import 'components/authors_data.dart';
 
 class AuthorScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class AuthorScreen extends StatefulWidget {
 }
 
 class _AuthorScreenState extends State<AuthorScreen> {
-  List<Author> authorList = [];
+  List<Book> authorList = [];
   @override
   void initState() {
     super.initState();

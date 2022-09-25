@@ -4,17 +4,17 @@ import 'package:http/http.dart' as http;
 
 import '../../../constants.dart';
 import '../../../models/RecentFile.dart';
-import '../../../models/author/author.dart';
+import '../../../models/books/books_dummy.dart';
 
-class AuthorsData extends StatefulWidget {
-  final List<Book> authorList;
-  const AuthorsData({required this.authorList, Key? key}) : super(key: key);
+class BooksData extends StatefulWidget {
+  final List<Book> bookList;
+  const BooksData({required this.bookList, Key? key}) : super(key: key);
 
   @override
-  State<AuthorsData> createState() => _AuthorsDataState();
+  State<BooksData> createState() => _BooksDataState();
 }
 
-class _AuthorsDataState extends State<AuthorsData> {
+class _BooksDataState extends State<BooksData> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,15 +35,21 @@ class _AuthorsDataState extends State<AuthorsData> {
                 horizontalMargin: 0,
                 columnSpacing: defaultPadding,
                 columns: [
+                  DataColumn(label: Text('Book Name')),
                   DataColumn(label: Text('Author Name')),
                   DataColumn(label: Text('Description')),
-                  DataColumn(label: Text('Birth')),
-                  DataColumn(label: Text('Death')),
-                  DataColumn(label: Text('Wikipedia')),
+                  DataColumn(label: Text('Genre')),
+                  // DataColumn(label: Text('File')),
+                  // DataColumn(label: Text('Cover')),
+                  DataColumn(label: Text('Status')),
+                  DataColumn(label: Text('Reject Reason')),
+                  DataColumn(label: Text('Language')),
+                  DataColumn(label: Text('Share')),
+                  // DataColumn(label: Text('UserId')),
                   DataColumn(label: Text('Actions')),
                 ],
-                rows: List.generate(widget.authorList.length,
-                    (index) => authorDataRow(widget.authorList[index]))),
+                rows: List.generate(widget.bookList.length,
+                    (index) => bookDataRow(widget.bookList[index]))),
           )
         ],
       ),
@@ -54,13 +60,19 @@ class _AuthorsDataState extends State<AuthorsData> {
     );
   }
 
-  DataRow authorDataRow(Book author) {
+  DataRow bookDataRow(Book book) {
     return DataRow(cells: [
-      DataCell(Text(author.name)),
-      DataCell(Text(author.description)),
-      DataCell(Text(author.birth)),
-      DataCell(Text(author.death)),
-      DataCell(Text(author.wikipedia)),
+      DataCell(Text(book.name)),
+      DataCell(Text(book.author)),
+      DataCell(Text(book.description)),
+      DataCell(Text(book.genre)),
+      // DataCell(Text(book.file)),
+      // DataCell(Text(book.cover)),
+      DataCell(Text(book.status)),
+      DataCell(Text(book.rejectReason)),
+      DataCell(Text(book.language)),
+      DataCell(Text(book.shares)),
+      // DataCell(Text(book.userId)),
       DataCell(Row(
         children: [
           ElevatedButton(
@@ -79,7 +91,7 @@ class _AuthorsDataState extends State<AuthorsData> {
                       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzAxMDE0MTZhNTFmNTQ0OGVmZDExZGYiLCJlbWFpbCI6Im1vbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MTAxMDI0MSwiZXhwIjoxNjYxMDEzMjQxfQ.kN5lst8oI6Kt1vxr-z9f1m9YN3GzHRv9RfbTxxKTNRI'
                 };
                 var request = http.Request('DELETE',
-                    Uri.parse('http://localhost:8000/authors/${author.id}'));
+                    Uri.parse('http://localhost:8000/books/${book.id}'));
 
                 request.headers.addAll(headers);
 
