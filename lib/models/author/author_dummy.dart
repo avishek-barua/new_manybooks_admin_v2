@@ -13,7 +13,7 @@ class AuthorGetResponse {
         required this.total,
     });
 
-    final List<Book>? data;
+    final List<Author>? data;
     final int total;
 
     factory AuthorGetResponse.fromRawJson(String str) => AuthorGetResponse.fromJson(json.decode(str));
@@ -21,7 +21,7 @@ class AuthorGetResponse {
     String toRawJson() => json.encode(toJson());
 
     factory AuthorGetResponse.fromJson(Map<String, dynamic> json) => AuthorGetResponse(
-        data: json["data"] == null ? null : List<Book>.from(json["data"].map((x) => Book.fromJson(x))),
+        data: json["data"] == null ? null : List<Author>.from(json["data"].map((x) => Author.fromJson(x))),
         total: json["total"] == null ? null : json["total"],
     );
 

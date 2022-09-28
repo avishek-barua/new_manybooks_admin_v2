@@ -5,8 +5,8 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-class Book {
-    Book({
+class Author {
+    Author({
        required this.id,
        required this.name,
        required this.avatar,
@@ -24,11 +24,11 @@ class Book {
     final String death;
     final String wikipedia;
 
-    factory Book.fromRawJson(String str) => Book.fromJson(json.decode(str));
+    factory Author.fromRawJson(String str) => Author.fromJson(json.decode(str));
 
     String toRawJson() => json.encode(toJson());
 
-    factory Book.fromJson(Map<String, dynamic> json) => Book(
+    factory Author.fromJson(Map<String, dynamic> json) => Author(
         id: json["_id"] == null ? null : json["_id"],
         name: json["name"] == null ? null : json["name"],
         avatar: json["avatar"] == null ? null : json["avatar"],

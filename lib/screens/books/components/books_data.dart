@@ -18,6 +18,7 @@ class _BooksDataState extends State<BooksData> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
           color: secondaryColor,
@@ -31,25 +32,33 @@ class _BooksDataState extends State<BooksData> {
           ),
           SizedBox(
             width: double.infinity,
-            child: DataTable(
-                horizontalMargin: 0,
-                columnSpacing: defaultPadding,
-                columns: [
-                  DataColumn(label: Text('Book Name')),
-                  DataColumn(label: Text('Author Name')),
-                  DataColumn(label: Text('Description')),
-                  DataColumn(label: Text('Genre')),
-                  // DataColumn(label: Text('File')),
-                  // DataColumn(label: Text('Cover')),
-                  DataColumn(label: Text('Status')),
-                  DataColumn(label: Text('Reject Reason')),
-                  DataColumn(label: Text('Language')),
-                  DataColumn(label: Text('Share')),
-                  // DataColumn(label: Text('UserId')),
-                  DataColumn(label: Text('Actions')),
-                ],
-                rows: List.generate(widget.bookList.length,
-                    (index) => bookDataRow(widget.bookList[index]))),
+            child: 
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.vertical,
+              // child: 
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                    horizontalMargin: 0,
+                    columnSpacing: defaultPadding,
+                    columns: [
+                      DataColumn(label: Text('Book Name')),
+                      DataColumn(label: Text('Author Name')),
+                      DataColumn(label: Text('Description')),
+                      DataColumn(label: Text('Genre')),
+                      DataColumn(label: Text('File')),
+                      DataColumn(label: Text('Cover')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Reject Reason')),
+                      DataColumn(label: Text('Language')),
+                      DataColumn(label: Text('Share')),
+                      DataColumn(label: Text('UserId')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rows: List.generate(widget.bookList.length,
+                        (index) => bookDataRow(widget.bookList[index]))),
+              ),
+            // ),
           )
         ],
       ),
@@ -61,25 +70,27 @@ class _BooksDataState extends State<BooksData> {
   }
 
   DataRow bookDataRow(Book book) {
-    return DataRow(cells: [
+    return DataRow(
+      
+      cells: [
       DataCell(Text(book.name)),
       DataCell(Text(book.author)),
       DataCell(Text(book.description)),
       DataCell(Text(book.genre)),
-      // DataCell(Text(book.file)),
-      // DataCell(Text(book.cover)),
+      DataCell(Text(book.file,style: TextStyle(overflow: TextOverflow.ellipsis),)),
+      DataCell(Text(book.cover)),
       DataCell(Text(book.status)),
       DataCell(Text(book.rejectReason)),
       DataCell(Text(book.language)),
       DataCell(Text(book.shares)),
-      // DataCell(Text(book.userId)),
+      DataCell(Text(book.userId)),
       DataCell(Row(
         children: [
           ElevatedButton(
               onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Create Atuthor'),
+                      title: const Text('Create Book'),
                       content: AuthorForm(),
                     ),
                   ),

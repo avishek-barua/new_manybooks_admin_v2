@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:manybooks_admin_v2/models/states/state.dart';
 import 'package:manybooks_admin_v2/screens/books/components/books_data.dart';
+import 'package:manybooks_admin_v2/utils/api_callings.dart';
+import 'package:states_rebuilder/states_rebuilder.dart';
 
 import '../../models/books/books_dummy.dart';
 import '../dashboard/components/header.dart';
@@ -24,98 +27,106 @@ class BookScreen extends StatefulWidget {
 }
 
 class _BookScreenState extends State<BookScreen> {
-  List<Book> bookList= [];
+  // List<Book> bookList= [];
   @override
   void initState() {
     super.initState();
     getAllBooks();
   }
 
-  Future<void> getAllBooks() async {
-    var headers = {
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzA1ZTM2NzQzNzE5ZGU3ZTA2M2E2ZDQiLCJlbWFpbCI6Im1vbWludWxrYXJpbTk3QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU3MTU3MSwiZXhwIjoxNjYzNTc0NTcxfQ.2DS4rFMiAB5pU5jAlljDgIfSz5RXtSKsoc7YNQNWTWc'
-    };
-    var request =
-        http.Request('Get', Uri.parse('http://localhost:8000/books/'));
-
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      String jsonResponse = await response.stream.bytesToString();
-
-      BooksResponse bookResponse =
-          BooksResponse.fromRawJson(jsonResponse);
-
-      // var authors = authorResponse.data!.toList();
-
-      // // print(authors[0]);
-      // print(authors[0]['name']);
-      // print(authorResponse.data);
-
-      setState(() {
-        bookList = bookResponse.data!;
-      });
-      print('hello');
-
-      // List<AuthorResponse> authorRespose =
-      //     await Helper.convertAuthorJsonToList(jsonResponse);
-      // print(authorRespose);
-    } else {
-      print(response.reasonPhrase);
-    }
+  getAllBooks() async {
+    List<Book> bookList = await ApiCalling.getAllBooks();
+    statesContainer.state.setBookList(bookList);
   }
+
+  // Future<void> getAllBooks() async {
+  //   var headers = {
+  //     'Authorization':
+  //         'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzA1ZTM2NzQzNzE5ZGU3ZTA2M2E2ZDQiLCJlbWFpbCI6Im1vbWludWxrYXJpbTk3QGdtYWlsLmNvbSIsImlhdCI6MTY2MzU3MTU3MSwiZXhwIjoxNjYzNTc0NTcxfQ.2DS4rFMiAB5pU5jAlljDgIfSz5RXtSKsoc7YNQNWTWc'
+  //   };
+  //   var request =
+  //       http.Request('Get', Uri.parse('http://localhost:8000/books/'));
+
+  //   request.headers.addAll(headers);
+
+  //   http.StreamedResponse response = await request.send();
+
+  //   if (response.statusCode == 200) {
+  //     String jsonResponse = await response.stream.bytesToString();
+
+  //     BooksResponse bookResponse =
+  //         BooksResponse.fromRawJson(jsonResponse);
+
+  //     // var authors = authorResponse.data!.toList();
+
+  //     // // print(authors[0]);
+  //     // print(authors[0]['name']);
+  //     // print(authorResponse.data);
+
+  //     setState(() {
+  //       bookList = bookResponse.data!;
+  //     });
+  //     print('hello');
+
+  //     // List<AuthorResponse> authorRespose =
+  //     //     await Helper.convertAuthorJsonToList(jsonResponse);
+  //     // print(authorRespose);
+  //   } else {
+  //     print(response.reasonPhrase);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            Header(),
-            SizedBox(height: defaultPadding),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    flex: 5,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Books',
-                                style: Theme.of(context).textTheme.subtitle1),
-                            ElevatedButton.icon(
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: defaultPadding * 1.5,
-                                    vertical: defaultPadding /
-                                        (Responsive.isMobile(context) ? 2 : 1),
-                                  ),
-                                ),
-                                onPressed: () => showDialog<String>(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text('Create Book'),
-                                        content: BookForm(),
-                                      ),
+      child: StateBuilder(
+        observe: () => statesContainer,
+        builder:(context,_)=> SingleChildScrollView(
+          padding: EdgeInsets.all(defaultPadding),
+          child: Column(
+            children: [
+              Header(),
+              SizedBox(height: defaultPadding),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                      flex: 5,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Books',
+                                  style: Theme.of(context).textTheme.subtitle1),
+                              ElevatedButton.icon(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: defaultPadding * 1.5,
+                                      vertical: defaultPadding /
+                                          (Responsive.isMobile(context) ? 2 : 1),
                                     ),
-                                icon: Icon(Icons.add),
-                                label: Text("Add New")),
-                          ],
-                        ),
-                        SizedBox(height: defaultPadding),
-                        BooksData(bookList: bookList)
-                      ],
-                    )),
-              ],
-            )
-          ],
+                                  ),
+                                  onPressed: () => showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: const Text('Create Book'),
+                                          content: BookForm(),
+                                        ),
+                                      ),
+                                  icon: Icon(Icons.add),
+                                  label: Text("Add New")),
+                            ],
+                          ),
+                          SizedBox(height: defaultPadding),
+                          BooksData(bookList: statesContainer.state.bookList)
+                        ],
+                      )),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -271,6 +282,8 @@ class _BookFormState extends State<BookForm> {
                     } else {
                       print(response.reasonPhrase);
                     }
+                    List<Book> bookList = await ApiCalling.getAllBooks();
+                    statesContainer.state.setBookList(bookList);
 
                     Navigator.pop(context, 'OK');
                   },

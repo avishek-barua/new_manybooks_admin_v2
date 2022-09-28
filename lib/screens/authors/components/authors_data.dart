@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
@@ -5,9 +6,11 @@ import 'package:http/http.dart' as http;
 import '../../../constants.dart';
 import '../../../models/RecentFile.dart';
 import '../../../models/author/author.dart';
+import '../../../models/states/state.dart';
+import '../../../utils/api_callings.dart';
 
 class AuthorsData extends StatefulWidget {
-  final List<Book> authorList;
+  final List<Author> authorList;
   const AuthorsData({required this.authorList, Key? key}) : super(key: key);
 
   @override
@@ -31,20 +34,23 @@ class _AuthorsDataState extends State<AuthorsData> {
           ),
           SizedBox(
             width: double.infinity,
-            child: DataTable(
-                horizontalMargin: 0,
-                columnSpacing: defaultPadding,
-                columns: [
-                  DataColumn(label: Text('Author Name')),
-                  DataColumn(label: Text('Description')),
-                  DataColumn(label: Text('Birth')),
-                  DataColumn(label: Text('Death')),
-                  DataColumn(label: Text('Wikipedia')),
-                  DataColumn(label: Text('Actions')),
-                ],
-                rows: List.generate(widget.authorList.length,
-                    (index) => authorDataRow(widget.authorList[index]))),
-          )
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                  horizontalMargin: 0,
+                  columnSpacing: defaultPadding,
+                  columns: [
+                    DataColumn(label: Text('Author Name')),
+                    DataColumn(label: Text('Description')),
+                    DataColumn(label: Text('Birth')),
+                    DataColumn(label: Text('Death')),
+                    DataColumn(label: Text('Wikipedia')),
+                    DataColumn(label: Text('Actions')),
+                  ],
+                  rows: List.generate(widget.authorList.length,
+                      (index) => authorDataRow(widget.authorList[index]))),
+            ),
+          ),
         ],
       ),
       // ListView.builder(itemBuilder: (ctx, i)=> ListTile(
@@ -54,7 +60,7 @@ class _AuthorsDataState extends State<AuthorsData> {
     );
   }
 
-  DataRow authorDataRow(Book author) {
+  DataRow authorDataRow(Author author) {
     return DataRow(cells: [
       DataCell(Text(author.name)),
       DataCell(Text(author.description)),
@@ -68,29 +74,77 @@ class _AuthorsDataState extends State<AuthorsData> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: const Text('Create Atuthor'),
-                      content: AuthorForm(),
+                      content: AuthorForm(
+                        author: author,
+                      ),
                     ),
                   ),
               child: Icon(Icons.edit)),
           ElevatedButton(
-              onPressed: () async {
-                var headers = {
-                  'Authorization':
-                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzAxMDE0MTZhNTFmNTQ0OGVmZDExZGYiLCJlbWFpbCI6Im1vbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MTAxMDI0MSwiZXhwIjoxNjYxMDEzMjQxfQ.kN5lst8oI6Kt1vxr-z9f1m9YN3GzHRv9RfbTxxKTNRI'
-                };
-                var request = http.Request('DELETE',
-                    Uri.parse('http://localhost:8000/authors/${author.id}'));
+              onPressed: () => showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Delete'),
+                      content:
+                          Text('Do you really want to delete ${author.name}'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            var headers = {
+                              'Authorization':
+                                  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzAxMDE0MTZhNTFmNTQ0OGVmZDExZGYiLCJlbWFpbCI6Im1vbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MTAxMDI0MSwiZXhwIjoxNjYxMDEzMjQxfQ.kN5lst8oI6Kt1vxr-z9f1m9YN3GzHRv9RfbTxxKTNRI'
+                            };
+                            var request = http.Request(
+                                'DELETE',
+                                Uri.parse(
+                                    'http://localhost:8000/authors/${author.id}'));
 
-                request.headers.addAll(headers);
+                            request.headers.addAll(headers);
 
-                http.StreamedResponse response = await request.send();
+                            http.StreamedResponse response =
+                                await request.send();
 
-                if (response.statusCode == 200) {
-                  print(await response.stream.bytesToString());
-                } else {
-                  print(response.reasonPhrase);
-                }
-              },
+                            if (response.statusCode == 200) {
+                              print(await response.stream.bytesToString());
+                            } else {
+                              print(response.reasonPhrase);
+                            }
+
+                            List<Author> authorList =
+                                await ApiCalling.getAllAuthors();
+                            statesContainer.state.setAuthorList(authorList);
+                            Navigator.pop(context, 'OK');
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  ),
+              // onPressed: () async {
+              //   var headers = {
+              //     'Authorization':
+              //         'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzAxMDE0MTZhNTFmNTQ0OGVmZDExZGYiLCJlbWFpbCI6Im1vbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MTAxMDI0MSwiZXhwIjoxNjYxMDEzMjQxfQ.kN5lst8oI6Kt1vxr-z9f1m9YN3GzHRv9RfbTxxKTNRI'
+              //   };
+              //   var request = http.Request('DELETE',
+              //       Uri.parse('http://localhost:8000/authors/${author.id}'));
+
+              //   request.headers.addAll(headers);
+
+              //   http.StreamedResponse response = await request.send();
+
+              //   if (response.statusCode == 200) {
+              //     print(await response.stream.bytesToString());
+              //   } else {
+              //     print(response.reasonPhrase);
+              //   }
+
+              //   List<Author> authorList = await ApiCalling.getAllAuthors();
+              //   statesContainer.state.setAuthorList(authorList);
+              // },
               child: Icon(
                 Icons.delete,
               ),
@@ -103,7 +157,8 @@ class _AuthorsDataState extends State<AuthorsData> {
 }
 
 class AuthorForm extends StatefulWidget {
-  const AuthorForm({Key? key}) : super(key: key);
+  final Author author;
+  const AuthorForm({required this.author, Key? key}) : super(key: key);
 
   @override
   State<AuthorForm> createState() => _AuthorFormState();
@@ -116,6 +171,20 @@ class _AuthorFormState extends State<AuthorForm> {
   TextEditingController birthController = TextEditingController();
   TextEditingController deathController = TextEditingController();
   TextEditingController wikipediaController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    nameController.text = widget.author.name;
+    avatarController.text = widget.author.avatar;
+    descriptionController.text = widget.author.description;
+    birthController.text = widget.author.birth;
+    deathController.text = widget.author.death;
+    wikipediaController.text = widget.author.wikipedia;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
